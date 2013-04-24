@@ -15,6 +15,9 @@ project/plugins/project/
 #vim
 *.swp
 
+#important
+twitter4j.properties
+
 #latex
 *.aux
 *.bbl

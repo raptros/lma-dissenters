@@ -1,8 +1,9 @@
 package lmad;
 import com.github.tototoshi.csv.CSVReader
 import com.github.tototoshi.csv.CSVWriter
+import java.util.Date
 
-case class LMADownloadLine(id:Long, user:String, tweet:String, date:String)
+case class LMADownloadLine(id:Long, user:String, tweet:String, date:Date)
 
 object DLsPath {
   val path = "/mnt/stuff/data/lmasearch/dls/"
@@ -17,7 +18,7 @@ case class DLsLoader(files:List[String]) {
     f <- files.toStream
     line <- CSVReader.open(path + f).toStream.tail
     Array(sId, user, tweet, date) = line.toArray
-  } yield LMADownloadLine(sId.toLong, user, tweet, date)
+  } yield LMADownloadLine(sId.toLong, user, tweet, new Date(Date.parse(date)))
 
 
   def getUnique:List[LMADownloadLine] = loadFiles.toList.map {
@@ -29,9 +30,9 @@ case class DLsLoader(files:List[String]) {
 
 case class DLsWriter(target:String) {
   import DLsPath.path
-  def write(cleans:List[LMADownloadLine]):Unit =  CSVWriter.open(path + target) { writer =>
+  def write(cleans:Seq[LMADownloadLine]):Unit =  CSVWriter.open(path + target) { writer =>
     cleans foreach {
-      case LMADownloadLine(id, user, tweet, date) => writer.writeRow(List(id.toString, user, tweet, date))
+      case LMADownloadLine(id, user, tweet, date) => writer.writeRow(List(id.toString, user, tweet, date.toString))
     }
   }
 }
