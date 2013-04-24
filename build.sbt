@@ -14,6 +14,8 @@ libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.0"
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "3.0.3"
 
+libraryDependencies += "net.sf.opencsv" % "opencsv" % "2.3"
+
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "0.7.0"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked")

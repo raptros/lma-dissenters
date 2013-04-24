@@ -1,6 +1,7 @@
 package lmad;
 import com.github.tototoshi.csv.CSVReader
 import com.github.tototoshi.csv.CSVWriter
+import scala.io.Source
 
 import twitter4j._
 import collection.JavaConversions._
@@ -56,9 +57,19 @@ class TweetDownloader(val user:String, val path:String) {
 
 object DownloadLMAers extends App {
   val basedir = "/mnt/stuff/data/lmasearch/lmaers/"
-  val uMap = DLsLoader(List(DLsPath.cleanFile)).groupedUsers
+  val uMap = DLsLoader(List(DLsPath.cleanPath),true).groupedUsers
   uMap.keys map {
     user => new TweetDownloader(user, s"$basedir$user.csv")
   } foreach (_.saveTweets)
 
 }
+
+object Redownload extends App {
+  val basedir = "/mnt/stuff/data/lmasearch/lmaers/"
+  val uMap = DLsLoader(List(DLsPath.cleanPath),true).groupedUsers
+  val redownload = Source.fromFile("/mnt/stuff/data/lmasearch/redownload").getLines.toList
+  redownload map {
+    user => new TweetDownloader(user, s"$basedir$user.csv")
+  } foreach (_.saveTweets)
+}
+
