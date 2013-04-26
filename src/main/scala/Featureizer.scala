@@ -7,7 +7,7 @@ import java.io.{File, FileWriter, PrintWriter}
 object Featurizer extends App {
   type MkFeat = Function1[LMADownloadLine, FeatVec]
   val featMakers:List[MkFeat] = List(words(_), moddedRTs(_), mentions(_), hashtags(_), containsURL(_))
-  val vectorsPath = "/mnt/stuff/data/lmasearch/vectors0/"
+  val vectorsPath = s"$basePath/vectors0/"
 
   def words(tweet:LMADownloadLine):FeatVec = tweet.tweet.split(" ")
   .withFilter(!_.startsWith("@")).withFilter(!_.startsWith("#")).withFilter(_!="RT").withFilter(!_.startsWith("http"))
@@ -57,5 +57,6 @@ object Featurizer extends App {
   }
   val writeVec = (writeVector(_:String,_:FeatVec)).tupled
   vectors foreach (writeVec(_))
+
 
 }

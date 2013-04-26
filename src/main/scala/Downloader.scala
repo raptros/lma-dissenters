@@ -56,7 +56,7 @@ class TweetDownloader(val user:String, val path:String) {
 }
 
 object DownloadLMAers extends App {
-  val basedir = "/mnt/stuff/data/lmasearch/lmaers/"
+  val basedir = s"$basePath/lmaers/"
   val uMap = DLsLoader(List(DLsPath.cleanPath),true).groupedUsers
   uMap.keys map {
     user => new TweetDownloader(user, s"$basedir$user.csv")
@@ -65,9 +65,9 @@ object DownloadLMAers extends App {
 }
 
 object Redownload extends App {
-  val basedir = "/mnt/stuff/data/lmasearch/lmaers/"
+  val basedir = s"$basePath/lmaers/"
   val uMap = DLsLoader(List(DLsPath.cleanPath),true).groupedUsers
-  val redownload = Source.fromFile("/mnt/stuff/data/lmasearch/redownload").getLines.toList
+  val redownload = Source.fromFile(s"$basePath/redownload").getLines.toList
   redownload map {
     user => new TweetDownloader(user, s"$basedir$user.csv")
   } foreach (_.saveTweets)

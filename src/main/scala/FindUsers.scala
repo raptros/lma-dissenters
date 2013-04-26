@@ -9,7 +9,7 @@ import java.io.{FileReader, FileWriter, File}
 case class LMADownloadLine(id:Long, user:String, tweet:String, date:Date)
 
 object DLsPath {
-  val path = "/mnt/stuff/data/lmasearch/dls/"
+  val path = s"$basePath/dls/"
   val files = List("lma_4_09_4_10.csv", "lma_4_10_4_11.csv", "lma_4_11_4_12.csv", "lma_4_12_4_13.csv")
   val targets = files map (path + _)
 
