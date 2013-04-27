@@ -101,12 +101,16 @@ class Evaluator(model:ClassifierModel, testUsers:UserSet, classMap:Map[String, S
   lazy val accuracy = (tp + tn).toDouble / (tp + fp + fn + tn)
 }
 
-
-object ModelData extends App {
+object DataLoader {
   val vectorsPath = s"$basePath/vectors0/"
   def loadVector(user:String):FeatVec = {
     Source.fromFile(s"$vectorsPath$user.vec").getLines.map(l => l.split('\t') match {case Array(f, v) => f -> v.toDouble}).toMap
   }
+  def loadUsers:Seq[String] = Option((new File(vectorsPath).listFiles)).map(_.toList).getOrElse(Nil).map(s => s.getName.split('.').apply(0))
+  def loadUserVecs:UserSet = loadUsers map { u => u -> loadVector(u)} toMap
+}
+
+object ModelData extends App {
   def splitUsers(userSet:UserSet):Array[UserSet] = {
     val arr = Array.fill[UserSet](10)(Map.empty[String,FeatVec])
     Random.shuffle(userSet.toSeq).zipWithIndex foreach {
@@ -120,9 +124,8 @@ object ModelData extends App {
     val eval = new Evaluator(model, splits(idx), classMap)
     (eval.precision, eval.recall, eval.accuracy)
   }
-  lazy val users = Option((new File(vectorsPath).listFiles)).map(_.toList).getOrElse(Nil).map(s => s.getName.split('.').apply(0))
-  lazy val userVecs = users map { u => u -> loadVector(u)} toMap
-  lazy val dissenters = loadDissenters()
+  lazy val userVecs = DataLoader.loadUserVecs
+  lazy val dissenters = loadDissenters
   lazy val classMap = userVecs.keys map { u => u -> (if (dissenters contains u) "dissenters" else "supporters")} toMap
   //ok now split up the users into 10 sets, each of size 12, then do 10-fold cross-val
   lazy val splits = splitUsers(userVecs)
